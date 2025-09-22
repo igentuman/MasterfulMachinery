@@ -2,16 +2,12 @@ package io.ticticboom.mods.mm.port.item;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
 import io.ticticboom.mods.mm.Ref;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
-import io.ticticboom.mods.mm.compat.jei.ingredient.MMJeiIngredients;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -65,8 +61,9 @@ public class SingleItemPortIngredient extends BaseItemPortIngredient {
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
-        recipeSlot.addIngredient(MMJeiIngredients.ITEM, this.stack);
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // The ingredient type constant will be provided by the JEI integration
+        context.addIngredient("ITEM", this.stack);
     }
 
 
@@ -95,5 +92,15 @@ public class SingleItemPortIngredient extends BaseItemPortIngredient {
         json.addProperty("canRun", remainingToInsert <= 0);
         json.add("searchedStorages", searchedStorages);
         return json;
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        return EmiStack.of(stack);
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        return EmiStack.of(stack);
     }
 }

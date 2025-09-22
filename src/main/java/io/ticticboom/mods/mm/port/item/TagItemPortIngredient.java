@@ -1,16 +1,13 @@
 package io.ticticboom.mods.mm.port.item;
 
 import com.google.gson.JsonObject;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
 import io.ticticboom.mods.mm.Ref;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
 import io.ticticboom.mods.mm.util.ConditionalLazy;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.tags.TagKey;
@@ -50,8 +47,9 @@ public class TagItemPortIngredient extends BaseItemPortIngredient {
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
-        recipeSlot.addItemStacks(stacks.get());
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // For tag ingredients, we need to pass the list of stacks
+        context.addIngredient("ITEM_STACKS", stacks.get());
     }
 
     @Override
@@ -59,5 +57,19 @@ public class TagItemPortIngredient extends BaseItemPortIngredient {
         json.addProperty("isTag", true);
         json.addProperty("WILL_NEVER_WORK", true);
         return json;
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        List<EmiStack> emiStacks = stacks.get().stream()
+                .map(EmiStack::of)
+                .toList();
+        return EmiIngredient.of(emiStacks);
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        // Tags can't be output, so return null
+        return null;
     }
 }

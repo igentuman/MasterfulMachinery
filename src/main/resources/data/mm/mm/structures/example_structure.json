@@ -1,0 +1,33 @@
+{
+  "name": "Example Machine",
+  "controllerIds": "mm:controller_a",
+  "layout": [
+    [
+      "   ",
+      " A ",
+      "   "
+    ],
+    [
+      "   ",
+      "PCD",
+      "   "
+    ]
+  ],
+  "key": {
+    "A": {
+      "block": "minecraft:oak_log",
+      "properties": [
+        {
+          "property": "axis",
+          "value": "x"
+        }
+      ]
+    },
+    "P": {
+      "block": "mm:my_port_a_input"
+    },
+    "D": {
+      "block": "mm:my_port_a_output"
+    }
+  }
+}

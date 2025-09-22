@@ -2,18 +2,14 @@ package io.ticticboom.mods.mm.port.energy;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
 import io.ticticboom.mods.mm.Ref;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
-import io.ticticboom.mods.mm.compat.jei.ingredient.MMJeiIngredients;
-import io.ticticboom.mods.mm.compat.jei.ingredient.energy.EnergyStack;
+import io.ticticboom.mods.mm.compat.emi.ingredient.EnergyEmiStack;
 import io.ticticboom.mods.mm.port.IPortIngredient;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.world.level.Level;
 
 public class EnergyPortIngredient implements IPortIngredient {
@@ -68,8 +64,9 @@ public class EnergyPortIngredient implements IPortIngredient {
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
-        recipeSlot.addIngredient(MMJeiIngredients.ENERGY, new EnergyStack(amount));
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // Pass the energy amount - the JEI integration will create the EnergyStack
+        context.addIngredient("ENERGY", amount);
     }
 
     @Override
@@ -125,5 +122,15 @@ public class EnergyPortIngredient implements IPortIngredient {
         json.addProperty("canRun", remaining <= 0);
         json.add("searchedStorages", searchedStoragesJson);
         return json;
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        return new EnergyEmiStack(amount);
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        return new EnergyEmiStack(amount);
     }
 }

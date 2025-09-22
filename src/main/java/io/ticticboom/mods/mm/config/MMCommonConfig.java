@@ -7,6 +7,7 @@ public class MMCommonConfig {
     public final ForgeConfigSpec.BooleanValue splitRecipesJei;
     public final ForgeConfigSpec.BooleanValue portsAutoExtractByDefault;
     public final ForgeConfigSpec.BooleanValue asyncStructureValidation;
+    public final ForgeConfigSpec.BooleanValue emiPortCategories;
 
     public MMCommonConfig(ForgeConfigSpec.Builder builder) {
         asyncStructureValidation = builder.comment("Enables async structure validation to improve TPS. Disable in case of issues.")
@@ -17,6 +18,8 @@ public class MMCommonConfig {
                 .define("splitRecipesJei", true);
         portsAutoExtractByDefault = builder.comment("The default value of 'autoPush' (when not set) on ports that support automatic extract to nearby storages")
                 .define("portsAutoExtractByDefault", false);
+        emiPortCategories = builder.comment("Groups EMI recipes by port types instead of structures (Energy, Fluid, Chemical, etc.)")
+                .define("emiPortCategories", false);
 
     }
 }

@@ -1,6 +1,7 @@
 package io.ticticboom.mods.mm.compat.jei.category;
 
 import io.ticticboom.mods.mm.Ref;
+import io.ticticboom.mods.mm.compat.jei.JeiRecipeLayoutContext;
 import io.ticticboom.mods.mm.compat.jei.SlotGrid;
 import io.ticticboom.mods.mm.compat.jei.SlotGridEntry;
 import io.ticticboom.mods.mm.recipe.RecipeModel;
@@ -78,11 +79,23 @@ public class MMRecipeCategory implements IRecipeCategory<RecipeModel> {
     public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel recipe, IFocusGroup focuses) {
         var inGrid = new SlotGrid(20, 20, 3, 5, 0, 0);
         var outGrid = new SlotGrid(20, 20, 3, 5, 100, 0);
+        
         for (IRecipeIngredientEntry input : recipe.inputs().inputs()) {
-            input.setRecipe(builder, recipe, focuses, helpers, inGrid);
+            SlotGridEntry slot = inGrid.next();
+            var rSlot = builder.addSlot(RecipeIngredientRole.INPUT, slot.getInnerX(), slot.getInnerY());
+            slot.setUsed();
+            
+            var context = new JeiRecipeLayoutContext(rSlot, recipe, inGrid);
+            input.setupRecipeLayout(context);
         }
+        
         for (IRecipeOutputEntry output : recipe.outputs().outputs()) {
-            output.setRecipe(builder, recipe, focuses, helpers, outGrid);
+            SlotGridEntry slot = outGrid.next();
+            var rSlot = builder.addSlot(RecipeIngredientRole.OUTPUT, slot.getInnerX(), slot.getInnerY());
+            slot.setUsed();
+            
+            var context = new JeiRecipeLayoutContext(rSlot, recipe, outGrid);
+            output.setupRecipeLayout(context);
         }
 
         recipe.inputSlots().addAll(inGrid.getSlots());

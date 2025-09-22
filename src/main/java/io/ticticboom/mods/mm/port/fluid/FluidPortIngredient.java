@@ -3,17 +3,13 @@ package io.ticticboom.mods.mm.port.fluid;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.mojang.serialization.JsonOps;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
 import io.ticticboom.mods.mm.Ref;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
-import io.ticticboom.mods.mm.compat.jei.ingredient.MMJeiIngredients;
 import io.ticticboom.mods.mm.port.IPortIngredient;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -80,11 +76,11 @@ public class FluidPortIngredient implements IPortIngredient {
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
-        recipeSlot.addIngredient(MMJeiIngredients.FLUID, new FluidStack(fluid, amount));
-        recipeSlot.addTooltipCallback((a, b) -> {
-            b.add(1, Component.literal(amount + " mB"));
-        });
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // Create a fluid stack with amount and tooltip information
+        FluidStack fluidStack = new FluidStack(fluid, amount);
+        context.addIngredient("FLUID", fluidStack);
+        // Note: Tooltip handling will be done by the JEI integration layer
     }
 
     @Override
@@ -148,5 +144,15 @@ public class FluidPortIngredient implements IPortIngredient {
         json.addProperty("canRun", remaining <= 0);
         json.add("searchedStorages", searchedStorages);
         return json;
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        return EmiStack.of(fluid, amount);
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        return EmiStack.of(fluid, amount);
     }
 }

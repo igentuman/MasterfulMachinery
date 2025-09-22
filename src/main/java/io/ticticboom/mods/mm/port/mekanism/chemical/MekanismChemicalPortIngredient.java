@@ -2,18 +2,16 @@ package io.ticticboom.mods.mm.port.mekanism.chemical;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
+import io.ticticboom.mods.mm.compat.emi.ingredient.ChemicalEmiStack;
 import io.ticticboom.mods.mm.port.IPortIngredient;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
 import mekanism.api.Action;
 import mekanism.api.chemical.Chemical;
 import mekanism.api.chemical.ChemicalStack;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
@@ -30,6 +28,8 @@ public abstract class MekanismChemicalPortIngredient<CHEMICAL extends Chemical<C
     public abstract CHEMICAL findChemical(ResourceLocation id);
     public abstract Class<? extends MekanismChemicalPortStorage<CHEMICAL, STACK>> getStorageClass();
     public abstract ResourceLocation getTypeId();
+    public abstract String getChemicalTypeName();
+    public abstract int getChemicalColor();
 
     public MekanismChemicalPortIngredient(ResourceLocation chemical, long amount) {
         this.id = chemical;
@@ -119,9 +119,18 @@ public abstract class MekanismChemicalPortIngredient<CHEMICAL extends Chemical<C
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
-        recipeSlot.addTooltipCallback((a, c) -> {
-            c.add(1, Component.literal(amount + " mB"));
-        });
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // Base implementation - subclasses should override to provide specific chemical type
+        // The tooltip will be handled by the JEI integration layer
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        return new ChemicalEmiStack(id, amount, getChemicalTypeName(), getChemicalColor());
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        return new ChemicalEmiStack(id, amount, getChemicalTypeName(), getChemicalColor());
     }
 }

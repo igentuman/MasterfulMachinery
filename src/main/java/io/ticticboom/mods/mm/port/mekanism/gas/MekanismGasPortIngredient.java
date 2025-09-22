@@ -1,18 +1,12 @@
 package io.ticticboom.mods.mm.port.mekanism.gas;
 
 import io.ticticboom.mods.mm.Ref;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.port.mekanism.chemical.MekanismChemicalPortIngredient;
 import io.ticticboom.mods.mm.port.mekanism.chemical.MekanismChemicalPortStorage;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
 import mekanism.api.MekanismAPI;
 import mekanism.api.chemical.gas.Gas;
 import mekanism.api.chemical.gas.GasStack;
-import mekanism.client.jei.MekanismJEI;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
 
@@ -43,10 +37,24 @@ public class MekanismGasPortIngredient extends MekanismChemicalPortIngredient<Ga
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
         GasStack s = createStack(chemical, amount);
         s.setAmount(1000);
-        recipeSlot.addIngredient(MekanismJEI.TYPE_GAS, s);
-        super.setRecipe(builder, model, focus, helpers, grid, recipeSlot);
+        context.addIngredient("MEK_GAS", s);
+    }
+    
+    @Override
+    public String getChemicalTypeName() {
+        return "Gas";
+    }
+    
+    @Override
+    public int getChemicalColor() {
+        // Try to get the color from the chemical, fallback to a default gas color
+        try {
+            return chemical.getTint();
+        } catch (Exception e) {
+            return 0xFFCCCCCC; // Light gray default for gases
+        }
     }
 }

@@ -62,9 +62,9 @@ Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed mollis lacinia magn
     side="BOTH"
 [[dependencies.mm]]
     modId="jei"
-    mandatory=true
+    mandatory=false
     versionRange="[15,16)"
-    ordering="NONE"
+    ordering="AFTER"
 [[dependencies.mm]]
     modId="kubejs"
     mandatory=false

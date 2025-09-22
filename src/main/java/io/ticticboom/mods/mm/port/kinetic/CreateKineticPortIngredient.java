@@ -1,15 +1,13 @@
 package io.ticticboom.mods.mm.port.kinetic;
 
 import com.google.gson.JsonObject;
-import io.ticticboom.mods.mm.compat.jei.SlotGrid;
+import dev.emi.emi.api.stack.EmiIngredient;
+import dev.emi.emi.api.stack.EmiStack;
+import io.ticticboom.mods.mm.compat.emi.ingredient.KineticEmiStack;
 import io.ticticboom.mods.mm.port.IPortIngredient;
-import io.ticticboom.mods.mm.recipe.RecipeModel;
+import io.ticticboom.mods.mm.port.IRecipeLayoutContext;
 import io.ticticboom.mods.mm.recipe.RecipeStateModel;
 import io.ticticboom.mods.mm.recipe.RecipeStorages;
-import mezz.jei.api.gui.builder.IRecipeLayoutBuilder;
-import mezz.jei.api.gui.builder.IRecipeSlotBuilder;
-import mezz.jei.api.helpers.IJeiHelpers;
-import mezz.jei.api.recipe.IFocusGroup;
 import net.minecraft.world.level.Level;
 
 public class CreateKineticPortIngredient implements IPortIngredient {
@@ -70,7 +68,8 @@ public class CreateKineticPortIngredient implements IPortIngredient {
     }
 
     @Override
-    public void setRecipe(IRecipeLayoutBuilder builder, RecipeModel model, IFocusGroup focus, IJeiHelpers helpers, SlotGrid grid, IRecipeSlotBuilder recipeSlot) {
+    public void setupRecipeLayout(IRecipeLayoutContext context) {
+        // Kinetic ingredients don't display anything in JEI - they're just requirements
     }
 
     @Override
@@ -81,5 +80,15 @@ public class CreateKineticPortIngredient implements IPortIngredient {
     @Override
     public JsonObject debugOutput(Level level, RecipeStorages storages, JsonObject json) {
         return null;
+    }
+    
+    @Override
+    public EmiIngredient getEmiIngredient() {
+        return new KineticEmiStack(speed);
+    }
+    
+    @Override
+    public EmiStack getEmiStack() {
+        return new KineticEmiStack(speed);
     }
 }

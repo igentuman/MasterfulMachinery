@@ -53,6 +53,7 @@ public class MMJeiPlugin implements IModPlugin {
         MMRecipeCategory category = new MMRecipeCategory(registration.getJeiHelpers(), parent);
         registration.addRecipeCategories(category);
         recipeCategories.add(category);
+        System.out.print(category.getTitle()+" recipeCategories");
     }
 
     @Override
